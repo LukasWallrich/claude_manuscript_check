@@ -35,6 +35,37 @@ Given a PDF of an academic manuscript, the skill:
 | Light Content Checks | Background adequacy, limitations, sample description, effect sizes |
 | Statistical Reporting | Statcheck verification, p-value consistency, marginal significance |
 
+## Getting Started
+
+### Quick start (use directly from the cloned repo)
+
+```bash
+git clone https://github.com/LukasWallrich/claude_manuscript_check.git
+cd claude_manuscript_check
+claude "/check-manuscript path/to/your/manuscript.pdf"
+```
+
+### Install into an existing project
+
+If you want to add this skill to a project you're already working on with Claude Code, copy the three skill files into your project's `.claude/commands/` directory:
+
+```bash
+# Clone the repo somewhere
+git clone https://github.com/LukasWallrich/claude_manuscript_check.git /tmp/claude_manuscript_check
+
+# Copy the skill files into your project
+mkdir -p .claude/commands
+cp /tmp/claude_manuscript_check/.claude/commands/check-manuscript.md .claude/commands/
+cp /tmp/claude_manuscript_check/.claude/commands/parse_manuscript.py .claude/commands/
+cp /tmp/claude_manuscript_check/.claude/commands/run_metacheck.R .claude/commands/
+```
+
+Then from your project directory:
+
+```bash
+claude "/check-manuscript path/to/manuscript.pdf"
+```
+
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
@@ -79,18 +110,6 @@ This produces two files alongside the input PDF:
 
 - `example/example_article_review.html` — self-contained HTML report
 - `example/example_article_review.pdf` — PDF version (if Chrome is available)
-
-### Using from a different directory
-
-If you want to use this skill from any project, copy the `.claude/commands/` folder into your target project's `.claude/` directory, or symlink it:
-
-```bash
-# From your project root
-mkdir -p .claude/commands
-cp /path/to/preprint_feedback_prompt_claude/.claude/commands/check-manuscript.md .claude/commands/
-cp /path/to/preprint_feedback_prompt_claude/.claude/commands/parse_manuscript.py .claude/commands/
-cp /path/to/preprint_feedback_prompt_claude/.claude/commands/run_metacheck.R .claude/commands/
-```
 
 ## Output
 
