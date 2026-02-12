@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manuscript Review Report</title>
+<style>
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #2d3748;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: #fff;
+  }
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a202c;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #4a5568;
+    margin-bottom: 6px;
+  }
+  .meta {
+    text-align: center;
+    font-size: 13px;
+    color: #a0aec0;
+    margin-bottom: 40px;
+  }
+  .about-box {
+    border-left: 4px solid #63b3ed;
+    background: #f7fafc;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    border-radius: 0 8px 8px 0;
+  }
+  .about-box h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .about-box p {
+    font-size: 14px;
+    color: #4a5568;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #2d3748;
+    letter-spacing: 1px;
+    margin-top: 50px;
+    margin-bottom: 4px;
+  }
+  .section-divider {
+    border: none;
+    border-top: 2px solid #e2e8f0;
+    margin-bottom: 16px;
+  }
+  .summary-text {
+    font-size: 15px;
+    color: #4a5568;
+    margin-bottom: 24px;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: space-around;
+    margin: 24px 0 40px 0;
+    text-align: center;
+  }
+  .stat-box {
+    flex: 1;
+    border-right: 1px solid #e2e8f0;
+  }
+  .stat-box:last-child { border-right: none; }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #718096;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .stat-number {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .stat-number.critical { color: #e53e3e; }
+  .stat-number.major { color: #dd6b20; }
+  .stat-number.minor { color: #38a169; }
+  .badge {
+    display: inline-block;
+    padding: 2px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    float: right;
+  }
+  .badge-critical { background: #fed7d7; color: #c53030; }
+  .badge-major { background: #feebc8; color: #c05621; }
+  .badge-minor { background: #fefcbf; color: #975a16; }
+  .count-badge {
+    display: inline-block;
+    padding: 2px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .count-critical { background: #fed7d7; color: #c53030; }
+  .count-major { background: #feebc8; color: #c05621; }
+  .count-minor { background: #fefcbf; color: #975a16; }
+  .issue-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    background: #fff;
+    page-break-inside: avoid;
+  }
+  .issue-location {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 12px;
+  }
+  .original-block {
+    background: #f7fafc;
+    border-left: 3px solid #cbd5e0;
+    padding: 10px 14px;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+    font-size: 13px;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.5;
+  }
+  .suggestion-block {
+    background: #f0fff4;
+    border-left: 3px solid #68d391;
+    padding: 10px 14px;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+    font-size: 13px;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.5;
+  }
+  .suggestion-block strong { font-weight: 700; }
+  .explanation {
+    font-size: 14px;
+    color: #4a5568;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 12px;
+  }
+  .explanation strong {
+    color: #2d3748;
+    font-weight: 700;
+  }
+  .grade-card {
+    border-left: 4px solid #68d391;
+    padding: 12px 20px;
+    margin-bottom: 12px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 8px 8px 0;
+  }
+  .grade-card.grade-b { border-left-color: #f6e05e; }
+  .grade-card.grade-c { border-left-color: #ed8936; }
+  .grade-card.grade-d { border-left-color: #fc8181; }
+  .grade-card.grade-f { border-left-color: #e53e3e; }
+  .grade-title { font-weight: 700; font-size: 15px; }
+  .grade-desc { font-size: 13px; color: #718096; margin-top: 2px; }
+  .grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .grade-a { background: #48bb78; }
+  .grade-a-plus { background: #38a169; }
+  .grade-a-minus { background: #68d391; }
+  .grade-b-badge { background: #ecc94b; color: #744210; }
+  .grade-b-plus-badge { background: #d69e2e; color: #fff; }
+  .grade-c-badge { background: #ed8936; color: #fff; }
+  .grade-d-badge { background: #fc8181; color: #fff; }
+  .grade-f-badge { background: #e53e3e; color: #fff; }
+  .overall-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  .review-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 40px 0;
+  }
+  .review-table th {
+    font-size: 11px;
+    font-weight: 700;
+    color: #718096;
+    letter-spacing: 1px;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .review-table th:nth-child(2),
+  .review-table th:nth-child(3) { text-align: center; }
+  .review-table td {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: top;
+  }
+  .review-table td:nth-child(2),
+  .review-table td:nth-child(3) { text-align: center; }
+  .table-section-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2d3748;
+  }
+  .table-section-desc {
+    font-size: 12px;
+    color: #a0aec0;
+  }
+  .status-pass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #c6f6d5;
+    color: #276749;
+    font-size: 16px;
+  }
+  .status-fail {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fed7d7;
+    color: #c53030;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .status-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #bee3f8;
+    color: #2b6cb0;
+    font-size: 16px;
+  }
+  .issues-count {
+    font-weight: 600;
+    font-size: 15px;
+    color: #4a5568;
+  }
+  .strengths-list, .improvements-list {
+    margin: 8px 0 16px 20px;
+    font-size: 14px;
+  }
+  .strengths-list li, .improvements-list li {
+    margin-bottom: 4px;
+    color: #4a5568;
+  }
+  strong.label { color: #2d3748; }
+  .content-note {
+    background: #ebf8ff;
+    border-left: 4px solid #4299e1;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    color: #2b6cb0;
+    page-break-inside: avoid;
+  }
+  .content-note strong { color: #2c5282; }
+  .badge-auto {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #e9d8fd;
+    color: #553c9a;
+  }
+  .retraction-warning {
+    border: 2px solid #e53e3e;
+    background: #fff5f5;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .pubpeer-flag {
+    border: 2px solid #dd6b20;
+    background: #fffaf0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .disagreement-note {
+    background: #fefcbf;
+    border-left: 4px solid #d69e2e;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    border-radius: 0 8px 8px 0;
+  }
+  .page-break { page-break-before: always; }
+  .no-break { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<h1>MANUSCRIPT REVIEW REPORT</h1>
+<p class="subtitle">Painting All Foreigners With One Brush? How the Salience of Muslims and Refugees Shapes Judgements</p>
+<p class="meta">2026-02-12 &bull; Review by Claude &bull; JSPP 2020, Vol. 8(1), 246&ndash;265</p>
+
+<div class="about-box">
+  <h2>ABOUT THIS REPORT</h2>
+  <p>This report was generated by an AI-powered manuscript review skill for Claude Code.
+  It combines LLM-based analysis with automated checks powered by the
+  <a href="https://github.com/scienceverse/metacheck">metacheck R package</a>
+  (DeBruine, 2024). Automated checks are marked with <span class="badge-auto">[metacheck]</span> badges.
+  All suggestions should be verified by the authors. <strong>Note:</strong> Some apparent errors
+  may stem from PDF text extraction and should be verified against the source document.</p>
+</div>
+
+<h2 class="section-title">OVERALL SUMMARY</h2>
+<hr class="section-divider">
+<p class="summary-text">This is a well-written empirical paper published in the Journal of Social and Political Psychology. The manuscript is generally in excellent shape, with clear structure, thorough referencing, and strong statistical reporting. Automated statcheck analysis found no errors in the reported test statistics. Two language errors were identified (a typo in Hypothesis 5 and a subject-verb agreement error), along with several minor formatting and compliance observations. The referencing is thorough and well-formatted; most issues flagged by automated parsing turned out to be extraction artifacts rather than genuine errors.</p>
+<div class="stats-row">
+  <div class="stat-box">
+    <div class="stat-label">CRITICAL ISSUES</div>
+    <div class="stat-number critical">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">MAJOR ISSUES</div>
+    <div class="stat-number major">2</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">MINOR ISSUES</div>
+    <div class="stat-number minor">7</div>
+  </div>
+</div>
+
+<!-- LANGUAGE QUALITY -->
+<h2 class="section-title">LANGUAGE QUALITY</h2>
+<hr class="section-divider">
+<p class="summary-text">Overall Language Score: <strong>A&minus;</strong> <span class="overall-grade grade-a-minus">A&minus;</span></p>
+
+<div class="grade-card">
+  <div>
+    <div class="grade-title">Grammar and Syntax</div>
+    <div class="grade-desc">Sentence construction, subject-verb agreement, punctuation</div>
+  </div>
+  <div class="grade-badge grade-a-minus">A&minus;</div>
+</div>
+
+<div class="grade-card">
+  <div>
+    <div class="grade-title">Clarity and Precision</div>
+    <div class="grade-desc">Effective communication of ideas, precise terminology</div>
+  </div>
+  <div class="grade-badge grade-a">A</div>
+</div>
+
+<div class="grade-card">
+  <div>
+    <div class="grade-title">Conciseness</div>
+    <div class="grade-desc">Avoidance of unnecessary verbiage</div>
+  </div>
+  <div class="grade-badge grade-a-minus">A&minus;</div>
+</div>
+
+<div class="grade-card">
+  <div>
+    <div class="grade-title">Academic Tone</div>
+    <div class="grade-desc">Formal, scholarly register</div>
+  </div>
+  <div class="grade-badge grade-a">A</div>
+</div>
+
+<div class="grade-card">
+  <div>
+    <div class="grade-title">Consistency</div>
+    <div class="grade-desc">Terminology, spelling, formatting patterns</div>
+  </div>
+  <div class="grade-badge grade-a-minus">A&minus;</div>
+</div>
+
+<div class="grade-card">
+  <div>
+    <div class="grade-title">Readability and Flow</div>
+    <div class="grade-desc">Transitions, sentence variety, logical progression</div>
+  </div>
+  <div class="grade-badge grade-a">A</div>
+</div>
+
+<p style="margin-top: 16px;"><strong class="label">Key Strengths:</strong></p>
+<ul class="strengths-list">
+  <li>Complex theoretical arguments are communicated with excellent clarity</li>
+  <li>Logical flow from introduction through hypotheses, methods, results, and discussion</li>
+  <li>Appropriate academic register maintained throughout</li>
+  <li>Good use of transitions between sections and ideas</li>
+  <li>The Non-Technical Summary is a valuable addition for accessibility</li>
+</ul>
+
+<p><strong class="label">Areas for Improvement:</strong></p>
+<ul class="improvements-list">
+  <li>One typo in Hypothesis 5 (&ldquo;refuges&rdquo; instead of &ldquo;refugees&rdquo;)</li>
+  <li>One subject-verb agreement error in the Results section</li>
+  <li>Some sentences in the Introduction are quite long and could benefit from splitting</li>
+</ul>
+
+<!-- SECTION REVIEW SUMMARY -->
+<h2 class="section-title">SECTION REVIEW SUMMARY</h2>
+<hr class="section-divider">
+
+<table class="review-table">
+  <thead>
+    <tr>
+      <th>SECTION</th>
+      <th>STATUS</th>
+      <th>ISSUES</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <div class="table-section-name">Title</div>
+        <div class="table-section-desc">Checks title clarity, length, and accuracy.</div>
+      </td>
+      <td><span class="status-pass">&#10003;</span></td>
+      <td><span class="issues-count">0</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Main Headings</div>
+        <div class="table-section-desc">Checks heading consistency and hierarchy.</div>
+      </td>
+      <td><span class="status-pass">&#10003;</span></td>
+      <td><span class="issues-count">0</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Title Page</div>
+        <div class="table-section-desc">Checks author info, affiliations, keywords, correspondence.</div>
+      </td>
+      <td><span class="status-fail">&times;</span></td>
+      <td><span class="issues-count">2</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Abstract</div>
+        <div class="table-section-desc">Checks structure, length, and content of the abstract.</div>
+      </td>
+      <td><span class="status-pass">&#10003;</span></td>
+      <td><span class="issues-count">0</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Structure</div>
+        <div class="table-section-desc">Checks section order, completeness, and organization.</div>
+      </td>
+      <td><span class="status-fail">&times;</span></td>
+      <td><span class="issues-count">1</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Figures and Tables</div>
+        <div class="table-section-desc">Checks citations, captions, and sequential ordering.</div>
+      </td>
+      <td><span class="status-pass">&#10003;</span></td>
+      <td><span class="issues-count">0</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Referencing</div>
+        <div class="table-section-desc">Checks citation completeness and reference formatting.</div>
+      </td>
+      <td><span class="status-fail">&times;</span></td>
+      <td><span class="issues-count">1</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Language</div>
+        <div class="table-section-desc">Checks grammar, spelling, punctuation, and consistency.</div>
+      </td>
+      <td><span class="status-fail">&times;</span></td>
+      <td><span class="issues-count">2</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Acronyms</div>
+        <div class="table-section-desc">Checks acronym definitions and consistent usage.</div>
+      </td>
+      <td><span class="status-fail">&times;</span></td>
+      <td><span class="issues-count">1</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Funding &amp; Compliance</div>
+        <div class="table-section-desc">Checks funding, ethics, COI, and author contributions.</div>
+      </td>
+      <td><span class="status-fail">&times;</span></td>
+      <td><span class="issues-count">2</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Light Content Checks</div>
+        <div class="table-section-desc">High-level observations on content quality.</div>
+      </td>
+      <td><span class="status-info">&#8505;</span></td>
+      <td><span class="issues-count" style="color: #a0aec0;">observations</span></td>
+    </tr>
+    <tr>
+      <td>
+        <div class="table-section-name">Statistical Reporting</div>
+        <div class="table-section-desc">Automated statistical checks via metacheck.</div>
+      </td>
+      <td><span class="status-pass">&#10003;</span></td>
+      <td><span class="issues-count">0</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- DETAILED RECOMMENDATIONS -->
+
+<h2 class="section-title">DETAILED RECOMMENDATIONS</h2>
+<hr class="section-divider">
+
+<!-- 1. Title -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">1. Title</h3>
+<p style="margin-bottom: 16px;">0 issues</p>
+<p class="summary-text">The title is clear, descriptive, and at 15 words is an appropriate length. The question format effectively engages the reader, and it accurately reflects the manuscript&rsquo;s content. No abbreviations are used.</p>
+
+<!-- 2. Main Headings -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">2. Main Headings</h3>
+<p style="margin-bottom: 16px;">0 issues</p>
+<p class="summary-text">Headings use title case consistently throughout. The hierarchy is logical, with main sections (Method, Results, Discussion) clearly distinguished from subsections. The paper follows the journal&rsquo;s style of not including an explicit &ldquo;Introduction&rdquo; heading, which is acceptable.</p>
+
+<!-- 3. Title Page -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">3. Title Page</h3>
+<p style="margin-bottom: 16px;">2 issues: <span class="count-badge count-minor">2 Minor</span></p>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: Title Page &mdash; Author Information <span class="badge badge-minor">Minor</span></div>
+  <div class="suggestion-block"><strong>Action:</strong> Add <strong>ORCID identifiers</strong> for each author (register at <a href="https://orcid.org">orcid.org</a> if needed).</div>
+  <p class="explanation"><strong>Explanation:</strong> No ORCID identifiers are provided. While not universally required, ORCID IDs are increasingly expected by journals and help with author disambiguation.</p>
+</div>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: Title Page &mdash; Keywords <span class="badge badge-minor">Minor</span></div>
+  <div class="original-block"><strong>Original:</strong> Keywords: immigration, foreigners, survey research, stereotypes, category content, salience</div>
+  <div class="suggestion-block"><strong>Suggestion:</strong> Keywords: immigration<strong>;</strong> foreigners<strong>;</strong> survey research<strong>;</strong> stereotypes<strong>;</strong> category content<strong>;</strong> salience</div>
+  <p class="explanation"><strong>Explanation:</strong> Keywords are separated by commas. Many journals and style guides (including APA) recommend semicolon-separated keywords. Worth verifying against the target journal&rsquo;s requirements. Note that the German keywords (Schl&uuml;sselw&ouml;rter) list only four terms compared to six English keywords &mdash; consider whether this is intentional.</p>
+</div>
+
+<!-- 4. Abstract -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">4. Abstract</h3>
+<p style="margin-bottom: 16px;">0 issues</p>
+<p class="summary-text">The abstract is well-structured at 165 words, within the typical 150&ndash;300 word range. It clearly states the research question, describes the methods (representative sample of 3,195 Germans), reports key findings, and provides implications. No citations, abbreviations, or references to figures/tables are included. The bilingual abstract (English and German) is a nice touch for this topic area.</p>
+
+<!-- 5. Structure -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">5. Structure</h3>
+<p style="margin-bottom: 16px;">1 issue: <span class="count-badge count-minor">1 Minor</span></p>
+<p class="summary-text">The manuscript follows a clear and conventional structure: Non-Technical Summary, Introduction (with themed subsections), Method, Results, Discussion, and References. All standard sections are present.</p>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: The Present Research (p. 251) <span class="badge badge-minor">Minor</span></div>
+  <div class="original-block"><strong>Original:</strong> After initial descriptive analyses, we tested four hypotheses: [H1, H2, H3, H4, ... then H5]</div>
+  <div class="suggestion-block"><strong>Suggestion:</strong> After initial descriptive analyses, we tested <strong>five</strong> hypotheses:</div>
+  <p class="explanation"><strong>Explanation:</strong> The text announces &ldquo;four hypotheses&rdquo; but five are listed (H1&ndash;H5). While H5 appears to have been introduced separately after explaining H4, the total count of hypotheses stated in the text should match the number actually presented. Consider updating to &ldquo;five hypotheses&rdquo; or restructuring to clarify that H5 is an additional hypothesis beyond the initial four.</p>
+</div>
+
+<!-- 6. Figures and Tables -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">6. Figures and Tables</h3>
+<p style="margin-bottom: 16px;">0 issues</p>
+<p class="summary-text">All 2 figures and 6 tables are cited in the text and appear in sequential order. Captions are descriptive and include necessary information such as sample sizes, variable definitions, and significance levels. Abbreviations in table notes are defined. Caption formatting is consistent throughout.</p>
+
+<!-- 7. Referencing -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">7. Referencing</h3>
+<p style="margin-bottom: 16px;">1 issue: <span class="count-badge count-minor">1 Minor</span></p>
+
+<h4 style="font-size: 15px; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 12px;">Automated Cross-Reference Check</h4>
+<p class="summary-text">GROBID automated parsing flagged several potential cross-reference issues. After manual verification against the PDF, most turned out to be parsing artifacts rather than genuine errors:</p>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Unlinked citations flagged by GROBID <span class="badge badge-minor">Minor</span></div>
+  <p class="explanation"><strong>Explanation:</strong> GROBID flagged 4 citations it could not link to bibliography entries. Manual verification found:
+  <br>&bull; <strong>&ldquo;195&rdquo;</strong> &mdash; False positive. This is a parsing artifact from the number &ldquo;3,195&rdquo; in the Non-Technical Summary.
+  <br>&bull; <strong>&ldquo;Oxforddictionaries.com, 2019&rdquo;</strong> &mdash; False positive. This citation correctly matches the bibliography entry for Oxforddictionaries.com (2019).
+  <br>&bull; <strong>&ldquo;Frisch, 1965&rdquo;</strong> &mdash; Not an error. This is a valid secondary citation (&ldquo;Frisch, 1965, as cited in Meier-Braun, 2015&rdquo;), which does not require its own reference list entry per APA style.
+  <br>&bull; <strong>&ldquo;Asbrock and colleagues (2014)&rdquo;</strong> &mdash; False positive (appears 4 times). GROBID could not link the narrative &ldquo;and colleagues&rdquo; format, but these correctly reference Asbrock et al. (2014) which is in the bibliography.
+  <br><br>Additionally, GROBID identified 4 &ldquo;uncited&rdquo; bibliography entries (GESIS 2016, Love &amp; Levy 2019, Oxforddictionaries.com 2019, Pew Research Center 2012). Manual verification confirmed all are cited in the text &mdash; GROBID failed to link them due to parsing limitations.
+  <br><br><strong>One genuine issue:</strong> The Destatis (2017) reference was not parsed by GROBID as a separate entry (it was concatenated with the preceding reference&rsquo;s DOI). However, verification against the PDF confirms the reference is correctly listed in the bibliography and properly cited in the text. No action needed from the authors.</p>
+</div>
+
+<h4 style="font-size: 15px; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 12px;">Retraction &amp; Integrity Check <span class="badge-auto">[metacheck]</span></h4>
+<p class="summary-text">32 references with DOIs were checked against the RetractionWatch database and PubPeer. <strong>No retracted references were found.</strong> No references had PubPeer comments.</p>
+
+<h4 style="font-size: 15px; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 12px;">DOI Check <span class="badge-auto">[metacheck]</span></h4>
+<p class="summary-text">Metacheck checked 9 references without DOIs and found potential matches for 5 of them via CrossRef. Adding DOIs where available improves discoverability. Authors should verify these matches before adding them.</p>
+
+<table class="review-table" style="margin-top: 12px; font-size: 13px;">
+  <thead>
+    <tr>
+      <th>REFERENCE</th>
+      <th style="text-align: left;">SUGGESTED DOI</th>
+      <th>CONFIDENCE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Meier-Braun (2015). <em>Die 101 wichtigsten Fragen: Einwanderung und Asyl</em></td>
+      <td style="text-align: left;"><a href="https://doi.org/10.17104/9783406683565">10.17104/9783406683565</a></td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+    <tr>
+      <td>Steinbach (2004). <em>Soziale Distanz</em></td>
+      <td style="text-align: left;"><a href="https://doi.org/10.1007/978-3-322-90546-8_20">10.1007/978-3-322-90546-8_20</a></td>
+      <td><span class="status-info">&#8505;</span></td>
+    </tr>
+    <tr>
+      <td>Pettigrew &amp; Tropp (2011). <em>When groups meet</em></td>
+      <td style="text-align: left;"><a href="https://doi.org/10.4324/9780203826461">10.4324/9780203826461</a></td>
+      <td><span class="status-info">&#8505;</span></td>
+    </tr>
+    <tr>
+      <td>GESIS (2017). <em>ALLBUS 2016</em></td>
+      <td style="text-align: left;"><a href="https://doi.org/10.1007/s11615-005-0281-2">10.1007/s11615-005-0281-2</a></td>
+      <td><span class="status-fail">&times;</span></td>
+    </tr>
+    <tr>
+      <td>Wasmer, Kwasniok, &amp; Kialunda (2018)</td>
+      <td style="text-align: left;"><a href="https://doi.org/10.1007/s11577-024-00955-1">10.1007/s11577-024-00955-1</a></td>
+      <td><span class="status-fail">&times;</span></td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size: 12px; color: #718096; margin-top: 8px;">Confidence: <span class="status-pass" style="width: 18px; height: 18px; font-size: 12px;">&#10003;</span> High (score &gt; 100) &mdash; <span class="status-info" style="width: 18px; height: 18px; font-size: 12px;">&#8505;</span> Moderate (score 60&ndash;100) &mdash; <span class="status-fail" style="width: 18px; height: 18px; font-size: 12px;">&times;</span> Low (score &lt; 60, likely wrong match). CrossRef match scores from metacheck.</p>
+
+<!-- 8. Language -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">8. Language</h3>
+<p style="margin-bottom: 16px;">2 issues: <span class="count-badge count-major">2 Major</span></p>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: The Present Research &mdash; Hypothesis 5 (p. 251) <span class="badge badge-major">Major</span></div>
+  <div class="original-block"><strong>Original:</strong> H5: Thinking of Muslims and refugees would moderate (strengthen) the association between attitudes towards Muslims and refuges and attitudes towards foreigners generally.</div>
+  <div class="suggestion-block"><strong>Suggestion:</strong> H5: Thinking of Muslims and refugees would moderate (strengthen) the association between attitudes towards Muslims and <strong>refugees</strong> and attitudes towards foreigners generally.</div>
+  <p class="explanation"><strong>Explanation:</strong> &ldquo;refuges&rdquo; (places of shelter) should be &ldquo;refugees&rdquo; (people seeking refuge). This typo appears in a prominent location &mdash; a numbered hypothesis &mdash; and could be confusing to readers.</p>
+</div>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: Results &mdash; Religion of Salient Groups (p. 256&ndash;257) <span class="badge badge-major">Major</span></div>
+  <div class="original-block"><strong>Original:</strong> the resulting regression models is shown in Table 4.</div>
+  <div class="suggestion-block"><strong>Suggestion:</strong> the resulting regression <strong>model is</strong> shown in Table 4.</div>
+  <p class="explanation"><strong>Explanation:</strong> Subject-verb agreement error. Since a single regression model is presented in Table 4, the subject should be singular (&ldquo;model&rdquo;) to agree with the singular verb (&ldquo;is&rdquo;). Alternatively, if the plural &ldquo;models&rdquo; is intended, the verb should be &ldquo;are shown.&rdquo;</p>
+</div>
+
+<!-- 9. Acronyms -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">9. Acronyms</h3>
+<p style="margin-bottom: 16px;">1 issue: <span class="count-badge count-minor">1 Minor</span></p>
+<p class="summary-text">Most acronyms are well-defined on first use (ALLBUS, CAPI). One abbreviation could benefit from definition.</p>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: Method &mdash; Variables (p. 253) <span class="badge badge-minor">Minor</span></div>
+  <div class="original-block"><strong>Original:</strong> based on the ISCED 1997 levels, from 1 = basic education to 6 = second stage of tertiary education.</div>
+  <div class="suggestion-block"><strong>Suggestion:</strong> based on the <strong>International Standard Classification of Education (</strong>ISCED<strong>)</strong> 1997 levels, from 1 = basic education to 6 = second stage of tertiary education.</div>
+  <p class="explanation"><strong>Explanation:</strong> ISCED is used without definition. While it is well-known in social science, defining it on first use improves accessibility for readers from other disciplines.</p>
+</div>
+
+<!-- 10. Funding & Compliance -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">10. Funding &amp; Compliance</h3>
+<p style="margin-bottom: 16px;">2 issues: <span class="count-badge count-minor">2 Minor</span></p>
+<p class="summary-text">The manuscript includes a funding statement (&ldquo;The authors have no funding to report&rdquo;), a competing interests declaration (&ldquo;no competing interests exist&rdquo;), and an acknowledgments section. <span class="badge-auto">[metacheck]</span> confirmed detection of both funding and COI statements. However, two compliance items are missing.</p>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: Compliance statements <span class="badge badge-minor">Minor</span></div>
+  <div class="suggestion-block"><strong>Action:</strong> Add an ethics/IRB statement, e.g.: <strong>&ldquo;Ethics approval was not required for this study as it uses publicly available, anonymized secondary data.&rdquo;</strong></div>
+  <p class="explanation"><strong>Explanation:</strong> No explicit ethics/IRB approval or informed consent statement is provided. Since this is a secondary analysis of a publicly available dataset (ALLBUS 2016), formal ethics approval may not have been required. However, many journals now require an explicit statement to this effect.</p>
+</div>
+
+<div class="issue-card no-break">
+  <div class="issue-location">Location: Compliance statements <span class="badge badge-minor">Minor</span></div>
+  <div class="suggestion-block"><strong>Action:</strong> Add an <strong>author contributions / CRediT statement</strong> detailing each author&rsquo;s role (e.g., Conceptualization, Data curation, Formal analysis, Writing).</div>
+  <p class="explanation"><strong>Explanation:</strong> No author contributions or CRediT (Contributor Roles Taxonomy) statement is provided. Many journals now require or strongly encourage such a statement.</p>
+</div>
+
+<h4 style="font-size: 15px; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 12px;">Open Science &amp; Compliance Details <span class="badge-auto">[metacheck]</span></h4>
+<p class="summary-text">Metacheck detected strong open science practices:</p>
+<ul class="strengths-list">
+  <li><strong>Open data &amp; code:</strong> Analysis code and coding framework shared on OSF (<a href="https://osf.io/tzjxp/">https://osf.io/tzjxp/</a>)</li>
+  <li><strong>Preregistration:</strong> 1 preregistration found on AsPredicted (ID: v3z7k, title: &ldquo;Prototypicality and attitudes towards foreigners&rdquo;). The manuscript transparently notes deviations from the preregistered analysis plan, including a shift from ANOVAs to multiple regressions.</li>
+  <li><strong>Funding statement:</strong> Detected and verified</li>
+  <li><strong>COI statement:</strong> Detected and verified</li>
+</ul>
+
+<!-- 11. Light Content Checks -->
+<div class="page-break"></div>
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">11. Light Content Checks</h3>
+<p style="margin-bottom: 16px; font-size: 14px; color: #718096;">These are observations, not required fixes. They are intended as constructive suggestions.</p>
+
+<div class="content-note">
+  <strong>Introduction &amp; background:</strong> The introduction provides thorough background on attitudes towards foreigners, the availability heuristic, outgroup heterogeneity, and the specific German context. The literature review is well-organized into thematic subsections.
+</div>
+
+<div class="content-note">
+  <strong>Limitations:</strong> The authors discuss limitations thoughtfully, including the cross-sectional design (which precludes causal inference), the focus on a single country, the potential for reverse causation, and the inability to test multiple dimensions of distance. This is a thorough treatment.
+</div>
+
+<div class="content-note">
+  <strong>Sample description:</strong> The sample is well-described (N = 3,195, M<sub>age</sub> = 51.4 years, SD = 18.2, 49.8% female, 91.5% born in Germany). The sampling procedure (ALLBUS random cluster sampling, 162 sample points, 34.6% response rate) and weighting approach are clearly reported.
+</div>
+
+<div class="content-note">
+  <strong>Effect sizes:</strong> Unstandardized regression coefficients (B) and standard errors are reported in all tables. R&sup2; values are provided for overall models. The authors also describe effect sizes in substantive terms (e.g., &ldquo;about 0.4 standard deviations more negative&rdquo;). Consider also reporting standardized coefficients (&beta;) to facilitate cross-study comparisons.
+</div>
+
+<div class="content-note">
+  <strong>Data/code availability:</strong> Full analysis code in R and the coding framework are shared on OSF. The preregistration on AsPredicted is also referenced, with transparent discussion of deviations. This represents excellent open science practice.
+</div>
+
+<div class="content-note">
+  <strong>Causal language:</strong> <span class="badge-auto">[metacheck]</span> Metacheck detected potential causal claims in the abstract. Given the cross-sectional, observational design, the language used (&ldquo;moderates the relationship,&rdquo; &ldquo;suggesting an attenuation of the links through familiarity&rdquo;) is generally appropriately hedged. The authors clearly acknowledge the cross-sectional limitation in the Discussion. Worth double-checking that all statements in the abstract avoid implying directionality that the design cannot support.
+</div>
+
+<!-- 12. Statistical Reporting -->
+<h3 style="font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px;">12. Statistical Reporting <span class="badge-auto">[metacheck]</span></h3>
+<p style="margin-bottom: 16px;">0 issues</p>
+
+<p class="summary-text"><strong>Statcheck results:</strong> 6 F-tests were detected and verified. <strong>No statistical errors or decision errors were found.</strong> All reported test statistics and p-values are consistent with the degrees of freedom provided.</p>
+
+<table class="review-table" style="margin-top: 12px;">
+  <thead>
+    <tr>
+      <th>TEST</th>
+      <th>REPORTED</th>
+      <th>STATUS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="font-size: 13px;">F(11, 2589) = 29.93, p &lt; .001</td>
+      <td style="font-size: 13px;">Computed p = 5.49e-60</td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+    <tr>
+      <td style="font-size: 13px;">F(6, 2583) = 0.98, p = .44</td>
+      <td style="font-size: 13px;">Computed p = .437</td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+    <tr>
+      <td style="font-size: 13px;">F(6, 2582) = 2.60, p = .016</td>
+      <td style="font-size: 13px;">Computed p = .016</td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+    <tr>
+      <td style="font-size: 13px;">F(12, 2582) = 3.49, p &lt; .001</td>
+      <td style="font-size: 13px;">Computed p &asymp; 0</td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+    <tr>
+      <td style="font-size: 13px;">F(3, 2880) = 1.86, p = .13</td>
+      <td style="font-size: 13px;">Computed p = .134</td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+    <tr>
+      <td style="font-size: 13px;">F(8, 2880) = 41.11, p &lt; .001</td>
+      <td style="font-size: 13px;">Computed p = 1.30e-62</td>
+      <td><span class="status-pass">&#10003;</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="summary-text"><strong>P-value summary:</strong> 15 p-values were detected across the manuscript (6 in-text, 9 in table notes/legends). P-value formatting is consistent throughout.</p>
+
+<p class="summary-text"><strong>Marginal significance:</strong> No instances of &ldquo;marginally significant&rdquo; or similar hedging language were detected. The use of &dagger; p &lt; .10 in table notes is clearly labeled as a trend indicator.</p>
+
+</body>
+</html>
