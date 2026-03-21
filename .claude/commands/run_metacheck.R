@@ -81,16 +81,21 @@ if (is.null(paper)) {
   quit(status = 0)
 }
 
-# Define modules to run, grouped by category
+# Define modules to run, grouped by category.
+# Order matters: ref_doi_check must run before ref_replication so that
+# the replication check can use suggested DOIs (via metacheck's pipeline).
+# Modules listed in `chained_modules` pass their output as input to the
+# next module in the chain; all others receive the raw paper object.
 modules <- list(
   # Statistical reporting
   stat_check = "stat_check",
   all_p_values = "all_p_values",
   marginal = "marginal",
-  # Reference integrity
+  # Reference integrity — chained: ref_doi_check → ref_replication
   ref_retraction = "ref_retraction",
   ref_pubpeer = "ref_pubpeer",
   ref_doi_check = "ref_doi_check",
+  ref_replication = "ref_replication",
   ref_consistency = "ref_consistency",
   # Open science & compliance
   open_practices = "open_practices",
@@ -102,47 +107,53 @@ modules <- list(
   causal_claims = "causal_claims"
 )
 
+# Modules where the output of the previous module should be passed as input
+# (to enable get_prev_outputs() pipeline). Key = module, value = predecessor.
+chained_after <- c(ref_replication = "ref_doi_check")
+
 results <- list()
+raw_outputs <- list()   # store metacheck_module_output objects for chaining
 modules_run <- character(0)
 modules_failed <- list()
+
+extract_output <- function(res) {
+  output <- list()
+  if (!is.null(res$table))         output$table <- res$table
+  if (!is.null(res$summary_table)) output$summary_table <- res$summary_table
+  if (!is.null(res$traffic_light)) output$traffic_light <- res$traffic_light
+  if (!is.null(res$summary_text))  output$summary_text <- res$summary_text
+  if (!is.null(res$report))        output$report <- res$report
+  output
+}
 
 for (name in names(modules)) {
   module_name <- modules[[name]]
   message("Running module: ", module_name)
 
-  result <- tryCatch({
-    res <- module_run(paper, module_name)
-    modules_run <<- c(modules_run, name)
+  # Determine input: use chained output if this module depends on a predecessor
+  predecessor <- chained_after[name]
+  if (!is.na(predecessor) && !is.null(raw_outputs[[predecessor]])) {
+    input <- raw_outputs[[predecessor]]
+  } else {
+    input <- paper
+  }
 
-    # Extract the key outputs from the module result
-    output <- list()
-    if (!is.null(res$table)) {
-      output$table <- res$table
+  res <- tryCatch(
+    module_run(input, module_name),
+    error = function(e) {
+      message("Module ", module_name, " failed: ", conditionMessage(e))
+      modules_failed[[length(modules_failed) + 1]] <<- list(
+        module = name,
+        error = conditionMessage(e)
+      )
+      NULL
     }
-    if (!is.null(res$summary_table)) {
-      output$summary_table <- res$summary_table
-    }
-    if (!is.null(res$traffic_light)) {
-      output$traffic_light <- res$traffic_light
-    }
-    if (!is.null(res$summary_text)) {
-      output$summary_text <- res$summary_text
-    }
-    if (!is.null(res$report)) {
-      output$report <- res$report
-    }
-    output
-  }, error = function(e) {
-    message("Module ", module_name, " failed: ", conditionMessage(e))
-    modules_failed[[length(modules_failed) + 1]] <<- list(
-      module = name,
-      error = conditionMessage(e)
-    )
-    NULL
-  })
+  )
 
-  if (!is.null(result)) {
-    results[[name]] <- result
+  if (!is.null(res)) {
+    raw_outputs[[name]] <- res
+    modules_run <- c(modules_run, name)
+    results[[name]] <- extract_output(res)
   }
 }
 
