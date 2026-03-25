@@ -13,27 +13,29 @@ You will be given file paths. Read them yourself using the Read tool:
 
 ## Process
 
-### Step 1: Read Auxiliary Data and Plan PDF Reading
+### Step 1: Read the Page Map
 
-First, read the structured data files:
-- Read `/tmp/manuscript_parsed.json` for GROBID data (citations, references, cross-reference report, abstract word count).
-- Read `/tmp/metacheck_results.json` if it exists. If not, note metacheck was unavailable.
-- Read `/tmp/manuscript_page_map.json` if it exists. This is your guide for targeted PDF reading.
+Read `/tmp/manuscript_page_map.json` if it exists. This tells you which pages contain which sections, figures, and tables. If it doesn't exist, you'll read all pages in Step 2.
 
-### Step 2: Read the PDF (Targeted)
+### Step 2: Read the PDF FIRST (before GROBID)
 
-If the page map is available, use it to read only the pages you need. PDF pages render as images, so you can visually verify formatting, layout, and content.
+**Read the PDF before reading any GROBID data.** The PDF is the ground truth — your visual reading is authoritative. GROBID is supplementary and often garbles text.
+
+If the page map is available, read targeted pages. If not, read all pages in 20-page chunks.
 
 **Required reads:**
-- **Page 1** (always): Title, authors, affiliations, abstract, keywords. Compare what you SEE in the PDF image against GROBID's extracted data for these fields. **If the PDF looks correct but GROBID's data is garbled (e.g., German text concatenated into keywords, extra text appended to a field), that is a GROBID parsing error, NOT a manuscript issue — do NOT create an issue card for it.** Only report problems you can see in the actual PDF image.
+- **Page 1** (always): Note the title, authors, affiliations, abstract, and keywords exactly as they appear in the PDF image. This is what the manuscript actually looks like.
 - **Figure/table pages** (from `page_summary.figures` and `page_summary.tables`): Inspect figure quality, table formatting, captions.
-- **Reference pages** (from `page_summary.references`): Compare bibliography entries in the PDF against GROBID data. **Same rule: if the PDF reference looks correct but GROBID concatenated it with adjacent text (e.g., "Destatis" appended to a DOI), that is a parsing artifact — do NOT report it.**
+- **Reference pages** (from `page_summary.references`): Read the bibliography as it actually appears in the PDF.
+- **On-demand**: Read other section pages as needed for content checks.
 
-**On-demand reads** (for content checks):
-- Read relevant section pages (e.g., Method pages for statistical methods, Discussion pages for limitations).
+### Step 3: Read GROBID and Metacheck Data
 
-**Fallback (no page map):**
-If the page map is not available, read the PDF in chunks of up to 20 pages at a time. First read page 1, then all remaining pages systematically.
+Now read the structured data — but treat it as supplementary to what you already saw in the PDF:
+- Read `/tmp/manuscript_parsed.json` for GROBID data (citations, cross-reference report, abstract word count).
+- Read `/tmp/metacheck_results.json` if it exists.
+
+**CRITICAL: When GROBID data contradicts what you saw in the PDF, the PDF wins.** GROBID frequently garbles text by concatenating adjacent entries (e.g., German abstract text bleeding into keywords, "Destatis" appended to a DOI, reference entries merged together). If you saw correct keywords/references/DOIs in the PDF but GROBID's extraction is garbled, that is a GROBID parsing error — do NOT create an issue card for it. Only report problems you actually saw in the PDF image.
 
 ### Step 3: Extract Structure
 
