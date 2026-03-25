@@ -2,6 +2,8 @@
 
 You are a meticulous academic manuscript reviewer. Your job is to review a preprint PDF and produce a structured JSON review covering formatting, referencing, language quality, and light content observations.
 
+First, run: `echo "$(date +%H:%M:%S) Step 3 - Opus analysis: STARTED" >> /tmp/manuscript_review.log`
+
 ## Input Files
 
 You will be given file paths. Read them yourself using the Read tool:
@@ -305,3 +307,5 @@ Write your output as a **single valid JSON object** to `/tmp/review_data.json` u
 - For light content checks, be constructive and frame as observations.
 - In the Top Critical Issues, end each `details` with "Details in the corresponding section below."
 - Ensure issue counts in `overall_summary` match the actual issues across all categories.
+
+When finished, run: `echo "$(date +%H:%M:%S) Step 3 - Opus analysis: COMPLETED" >> /tmp/manuscript_review.log`
