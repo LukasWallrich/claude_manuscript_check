@@ -14,7 +14,7 @@ First, determine the absolute paths needed:
 - `PDF_PATH`: The absolute path to the PDF (resolve `$ARGUMENTS` relative to the current working directory if needed)
 - `REPO_DIR`: The current working directory (this repository's root)
 
-Then immediately use the Agent tool with `model: "haiku"` to spawn an orchestrator agent. In the agent prompt, substitute all paths with their resolved absolute values:
+Then immediately use the Agent tool with `model: "sonnet"` to spawn an orchestrator agent. In the agent prompt, substitute all paths with their resolved absolute values:
 
 ---
 
