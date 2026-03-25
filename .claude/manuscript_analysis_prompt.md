@@ -9,18 +9,32 @@ You will be given file paths. Read them yourself using the Read tool:
 1. **PDF file**: The manuscript to review (path provided in your prompt)
 2. **GROBID JSON**: `/tmp/manuscript_parsed.json` — structured data extracted from the PDF
 3. **Metacheck JSON**: `/tmp/metacheck_results.json` — automated statistical/reference checks (may not exist if metacheck was unavailable)
+4. **Page map JSON**: `/tmp/manuscript_page_map.json` — page-level layout showing which pages contain which sections, figures, and tables (may not exist)
 
 ## Process
 
-### Step 1: Read the PDF
+### Step 1: Read Auxiliary Data and Plan PDF Reading
 
-Read the PDF in chunks of up to 20 pages at a time using the Read tool with the `pages` parameter. First try reading just page 1 to determine total length, then read all pages systematically. Focus on visual formatting, layout, and content that GROBID may not capture well (figure quality, table formatting, heading styles). The structured extraction from GROBID handles citations and bibliography systematically.
+First, read the structured data files:
+- Read `/tmp/manuscript_parsed.json` for GROBID data (citations, references, cross-reference report, abstract word count).
+- Read `/tmp/metacheck_results.json` if it exists. If not, note metacheck was unavailable.
+- Read `/tmp/manuscript_page_map.json` if it exists. This is your guide for targeted PDF reading.
 
-### Step 2: Read Auxiliary Data
+### Step 2: Read the PDF (Targeted)
 
-Read `/tmp/manuscript_parsed.json` for structured data (citations, references, cross-reference report, abstract word count).
+If the page map is available, use it to read only the pages you need. PDF pages render as images, so you can visually verify formatting, layout, and content.
 
-Read `/tmp/metacheck_results.json` if it exists. If the file does not exist or is empty, note that metacheck was not available and proceed without it.
+**Required reads:**
+- **Page 1** (always): Title, authors, affiliations, abstract, keywords. Visually verify these against GROBID's extracted data.
+- **Figure/table pages** (from `page_summary.figures` and `page_summary.tables`): Inspect figure quality, table formatting, captions.
+- **Reference pages** (from `page_summary.references`): Verify bibliography entries against GROBID data. Check for concatenation artifacts.
+
+**On-demand reads** (when you spot issues in GROBID data):
+- If GROBID text looks garbled (e.g., keywords contain unrelated text, a DOI has extra characters appended), use the page map to find the relevant page and visually verify before flagging.
+- For content checks, read the relevant section pages (e.g., Method pages for statistical methods, Discussion pages for limitations).
+
+**Fallback (no page map):**
+If the page map is not available, read the PDF in chunks of up to 20 pages at a time. First read page 1, then all remaining pages systematically.
 
 ### Step 3: Extract Structure
 
@@ -285,7 +299,7 @@ Write your output as a **single valid JSON object** to `/tmp/review_data.json` u
 - Do NOT fabricate issues. If a section looks fine, say so in the summary.
 - **Critically evaluate all automated findings.** Metacheck and GROBID are useful but produce false positives. You are the expert reviewer — do not blindly promote automated flags into issues. For every automated finding, ask: "Is this actually a problem in context?" If not, either omit it or note it as informational in the summary.
 - **Only flag issues the author can fix in the manuscript.** Do not flag PDF metadata issues (missing PDF title, PDF export settings), GROBID parsing failures, or other tooling artifacts.
-- **CRITICAL: Visually verify ALL GROBID-extracted data against the PDF before flagging.** GROBID frequently garbles text — concatenating adjacent entries (e.g., appending the next reference's title to a DOI, or bleeding an abstract into keywords), dropping characters, or splitting fields incorrectly. This affects keywords, author names, affiliations, bibliography entries, DOIs, and more. Before reporting ANY issue sourced from GROBID data, visually check the relevant PDF page (pages render as images). If the PDF looks correct but GROBID's extraction is garbled, that is a parsing artifact — do NOT report it as a manuscript issue.
+- **CRITICAL: Visually verify ALL GROBID-extracted data against the PDF before flagging.** GROBID frequently garbles text — concatenating adjacent entries (e.g., appending the next reference's title to a DOI, or bleeding an abstract into keywords), dropping characters, or splitting fields incorrectly. This affects keywords, author names, affiliations, bibliography entries, DOIs, and more. Before reporting ANY issue sourced from GROBID data, visually check the relevant PDF page (pages render as images). Use the page map to find the right page: `page_summary.references` for bibliography issues, page 1 for keywords/abstract/title page issues. If the PDF looks correct but GROBID's extraction is garbled, that is a parsing artifact — do NOT report it as a manuscript issue.
 - **Do NOT copy structured metacheck data into your JSON.** The renderer reads DOI suggestions, statcheck results, p-value summaries, retraction reports, and open science findings directly from the metacheck JSON. You do NOT need to reproduce them. Instead, use `metacheck_info` only for: (a) `doi_exclusions` — a list of DOIs from metacheck that are clearly wrong matches and should be hidden from the table, (b) `replication_results` — these need your contextual judgment about relevance, (c) `disagreements` — when you disagree with a metacheck finding. Write subsection summaries that provide context (e.g., "Metacheck scanned 57 references. No retracted references found.") but leave the data tables to the renderer.
 - **Each issue and observation in exactly one category.** Do not flag the same issue in multiple categories. Place content observations in the category they relate to — e.g., abstract observations go in Category 4 (Abstract), not Category 3 (Title Page).
 - Cross-reference the GROBID parse with your manual PDF reading. The PDF is ground truth.

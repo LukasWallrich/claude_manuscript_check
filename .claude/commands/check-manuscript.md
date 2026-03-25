@@ -28,6 +28,18 @@ python3 REPO_DIR/.claude/commands/parse_manuscript.py "PDF_PATH" > /tmp/manuscri
 
 Check the exit code. If it failed, read `/tmp/manuscript_parse_errors.log` to understand why. The analysis agent will handle GROBID failures gracefully.
 
+### Step 1b: Extract page map (if available)
+
+```bash
+python3 REPO_DIR/.claude/commands/extract_page_map.py "PDF_PATH" > /tmp/manuscript_page_map.json 2>/tmp/page_map_errors.log
+```
+
+Check the exit code:
+- **Exit 0**: page map generated. Set `page_map_available = true`.
+- **Non-zero or command fails**: Set `page_map_available = false`. The analysis agent falls back to reading all pages.
+
+Do NOT read the page map JSON.
+
 ### Step 2: Run metacheck (if available)
 
 ```bash
@@ -52,6 +64,7 @@ Use the Agent tool with `model: "opus"` and the following prompt:
 > - PDF to review: `PDF_PATH`
 > - GROBID structured data: `/tmp/manuscript_parsed.json`
 > - Metacheck results: `/tmp/metacheck_results.json` (metacheck_available = {true or false depending on Step 2})
+> - Page map: `/tmp/manuscript_page_map.json` (page_map_available = {true or false depending on Step 1b})
 >
 > **Output:** Write your JSON review to `/tmp/review_data.json` using the Write tool.
 
