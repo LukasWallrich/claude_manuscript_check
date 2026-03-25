@@ -70,6 +70,26 @@ Use the Agent tool with `model: "opus"` and the following prompt:
 
 Wait for the agent to complete. If it reports an error, inform the user.
 
+### Step 3b: Verify issues against PDF
+
+Use the Agent tool with `model: "sonnet"` and the following prompt:
+
+> You are a verification agent. Your job is to check whether issues flagged in a manuscript review are real problems visible in the PDF, or artifacts of GROBID text extraction.
+>
+> 1. Read the review JSON from `/tmp/review_data.json`
+> 2. Read the page map from `/tmp/manuscript_page_map.json`
+> 3. For each issue in the review that references text extracted by GROBID (keywords, bibliography entries, DOIs, author names, affiliations), read the relevant PDF page and visually verify:
+>    - For title page issues (keywords, authors, affiliations): read page 1 of `PDF_PATH`
+>    - For bibliography issues: read the reference pages from `page_summary.references` in the page map
+>    - PDF pages render as images — compare what you SEE against the issue's "original" text
+> 4. If the PDF looks correct but the issue is based on garbled GROBID text extraction, REMOVE that issue from the JSON.
+> 5. Update the issue counts in `overall_summary` and `section_review` to match.
+> 6. Write the cleaned JSON back to `/tmp/review_data.json`.
+>
+> Only remove issues that are clearly GROBID artifacts. Keep all issues that reflect real problems visible in the PDF.
+
+Wait for the agent to complete.
+
 ### Step 4: Render the HTML report
 
 Determine the output path: same directory as the PDF, named `{pdf_basename}_review.html`.

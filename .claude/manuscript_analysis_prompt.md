@@ -13,29 +13,25 @@ You will be given file paths. Read them yourself using the Read tool:
 
 ## Process
 
-### Step 1: Read the Page Map
+### Step 1: Read Auxiliary Data and Plan PDF Reading
 
-Read `/tmp/manuscript_page_map.json` if it exists. This tells you which pages contain which sections, figures, and tables. If it doesn't exist, you'll read all pages in Step 2.
+Read the structured data files:
+- Read `/tmp/manuscript_page_map.json` if it exists. This tells you which pages to read.
+- Read `/tmp/manuscript_parsed.json` for GROBID data (citations, references, cross-reference report, abstract word count).
+- Read `/tmp/metacheck_results.json` if it exists. If not, note metacheck was unavailable.
 
-### Step 2: Read the PDF FIRST (before GROBID)
+### Step 2: Read the PDF (Targeted)
 
-**Read the PDF before reading any GROBID data.** The PDF is the ground truth — your visual reading is authoritative. GROBID is supplementary and often garbles text.
-
-If the page map is available, read targeted pages. If not, read all pages in 20-page chunks.
+If the page map is available, use it to read only the pages you need. PDF pages render as images.
 
 **Required reads:**
-- **Page 1** (always): Note the title, authors, affiliations, abstract, and keywords exactly as they appear in the PDF image. This is what the manuscript actually looks like.
+- **Page 1** (always): Title, authors, affiliations, abstract, keywords. Inspect formatting and layout.
 - **Figure/table pages** (from `page_summary.figures` and `page_summary.tables`): Inspect figure quality, table formatting, captions.
-- **Reference pages** (from `page_summary.references`): Read the bibliography as it actually appears in the PDF.
+- **Reference pages** (from `page_summary.references`): Check bibliography formatting and completeness.
 - **On-demand**: Read other section pages as needed for content checks.
 
-### Step 3: Read GROBID and Metacheck Data
-
-Now read the structured data — but treat it as supplementary to what you already saw in the PDF:
-- Read `/tmp/manuscript_parsed.json` for GROBID data (citations, cross-reference report, abstract word count).
-- Read `/tmp/metacheck_results.json` if it exists.
-
-**CRITICAL: When GROBID data contradicts what you saw in the PDF, the PDF wins.** GROBID frequently garbles text by concatenating adjacent entries (e.g., German abstract text bleeding into keywords, "Destatis" appended to a DOI, reference entries merged together). If you saw correct keywords/references/DOIs in the PDF but GROBID's extraction is garbled, that is a GROBID parsing error — do NOT create an issue card for it. Only report problems you actually saw in the PDF image.
+**Fallback (no page map):**
+If the page map is not available, read the PDF in chunks of up to 20 pages at a time.
 
 ### Step 3: Extract Structure
 
@@ -300,7 +296,7 @@ Write your output as a **single valid JSON object** to `/tmp/review_data.json` u
 - Do NOT fabricate issues. If a section looks fine, say so in the summary.
 - **Critically evaluate all automated findings.** Metacheck and GROBID are useful but produce false positives. You are the expert reviewer — do not blindly promote automated flags into issues. For every automated finding, ask: "Is this actually a problem in context?" If not, either omit it or note it as informational in the summary.
 - **Only flag issues the author can fix in the manuscript.** Do not flag PDF metadata issues (missing PDF title, PDF export settings), GROBID parsing failures, or other tooling artifacts.
-- **CRITICAL: Visually verify ALL GROBID-extracted data against the PDF before flagging.** GROBID frequently garbles text — concatenating adjacent entries (e.g., appending the next reference's title to a DOI, or bleeding an abstract into keywords), dropping characters, or splitting fields incorrectly. This affects keywords, author names, affiliations, bibliography entries, DOIs, and more. Before reporting ANY issue sourced from GROBID data, visually check the relevant PDF page (pages render as images). Use the page map to find the right page: `page_summary.references` for bibliography issues, page 1 for keywords/abstract/title page issues. If the PDF looks correct but GROBID's extraction is garbled, that is a parsing artifact — do NOT report it as a manuscript issue.
+- **CRITICAL: Visually verify GROBID-extracted data against the PDF before flagging.** GROBID frequently garbles text — concatenating adjacent entries, dropping characters, or splitting fields incorrectly. Before reporting ANY issue sourced from GROBID data, visually check the relevant PDF page (pages render as images). Use the page map to find the right page. If the PDF looks correct but GROBID's extraction is garbled, that is a parsing artifact — do NOT report it as a manuscript issue.
 - **Do NOT copy structured metacheck data into your JSON.** The renderer reads DOI suggestions, statcheck results, p-value summaries, retraction reports, and open science findings directly from the metacheck JSON. You do NOT need to reproduce them. Instead, use `metacheck_info` only for: (a) `doi_exclusions` — a list of DOIs from metacheck that are clearly wrong matches and should be hidden from the table, (b) `replication_results` — these need your contextual judgment about relevance, (c) `disagreements` — when you disagree with a metacheck finding. Write subsection summaries that provide context (e.g., "Metacheck scanned 57 references. No retracted references found.") but leave the data tables to the renderer.
 - **Each issue and observation in exactly one category.** Do not flag the same issue in multiple categories. Place content observations in the category they relate to — e.g., abstract observations go in Category 4 (Abstract), not Category 3 (Title Page).
 - Cross-reference the GROBID parse with your manual PDF reading. The PDF is ground truth.
