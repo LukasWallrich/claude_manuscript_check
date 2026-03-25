@@ -1,0 +1,81 @@
+@page { size: A4; margin: 2cm 2cm 2.5cm 2cm; }
+@page { @bottom-center { content: counter(page); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 11px; color: #a0aec0; } }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #2d3748; line-height: 1.6; max-width: 800px;
+  margin: 0 auto; padding: 40px 20px; background: #fff;
+}
+h1 { text-align: center; font-size: 24px; font-weight: 800; color: #1a202c; letter-spacing: 2px; margin-bottom: 8px; }
+.subtitle { text-align: center; font-size: 18px; color: #4a5568; margin-bottom: 6px; }
+.meta { text-align: center; font-size: 13px; color: #a0aec0; margin-bottom: 40px; }
+.about-box { border-left: 4px solid #63b3ed; background: #f7fafc; padding: 20px 24px; margin-bottom: 40px; border-radius: 0 8px 8px 0; }
+.about-box h2 { font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 8px; letter-spacing: 1px; }
+.about-box p { font-size: 14px; color: #4a5568; }
+.section-title { font-size: 20px; font-weight: 800; color: #2d3748; letter-spacing: 1px; margin-top: 50px; margin-bottom: 4px; }
+.section-divider { border: none; border-top: 2px solid #e2e8f0; margin-bottom: 16px; }
+.summary-text { font-size: 15px; color: #4a5568; margin-bottom: 24px; }
+.stats-row { display: flex; justify-content: space-around; margin: 24px 0 40px 0; text-align: center; }
+.stat-box { flex: 1; border-right: 1px solid #e2e8f0; }
+.stat-box:last-child { border-right: none; }
+.stat-label { font-size: 11px; font-weight: 700; color: #718096; letter-spacing: 1px; margin-bottom: 4px; }
+.stat-number { font-size: 28px; font-weight: 700; }
+.stat-number.critical { color: #e53e3e; }
+.stat-number.major { color: #dd6b20; }
+.stat-number.minor { color: #38a169; }
+.badge { display: inline-block; padding: 2px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; float: right; }
+.badge-critical { background: #fed7d7; color: #c53030; }
+.badge-major { background: #feebc8; color: #c05621; }
+.badge-minor { background: #fefcbf; color: #975a16; }
+.count-badge { display: inline-block; padding: 2px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+.count-critical { background: #fed7d7; color: #c53030; }
+.count-major { background: #feebc8; color: #c05621; }
+.count-minor { background: #fefcbf; color: #975a16; }
+.issue-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 16px; background: #fff; page-break-inside: avoid; }
+.issue-location { font-size: 13px; color: #718096; margin-bottom: 12px; }
+.original-block { background: #f7fafc; border-left: 3px solid #cbd5e0; padding: 10px 14px; font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace; font-size: 13px; margin-bottom: 8px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+.suggestion-block { background: #f0fff4; border-left: 3px solid #68d391; padding: 10px 14px; font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace; font-size: 13px; margin-bottom: 12px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+.suggestion-block strong { font-weight: 700; }
+.explanation { font-size: 14px; color: #4a5568; border-top: 1px dashed #e2e8f0; padding-top: 12px; }
+.explanation strong { color: #2d3748; font-weight: 700; }
+.grade-card { border-left: 4px solid #68d391; padding: 12px 20px; margin-bottom: 12px; background: #fff; display: flex; justify-content: space-between; align-items: center; border-radius: 0 8px 8px 0; }
+.grade-card.grade-b { border-left-color: #f6e05e; }
+.grade-card.grade-c { border-left-color: #ed8936; }
+.grade-card.grade-d { border-left-color: #fc8181; }
+.grade-card.grade-f { border-left-color: #e53e3e; }
+.grade-title { font-weight: 700; font-size: 15px; }
+.grade-desc { font-size: 13px; color: #718096; margin-top: 2px; }
+.grade-badge { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.grade-a { background: #48bb78; }
+.grade-a-plus { background: #38a169; }
+.grade-a-minus { background: #68d391; }
+.grade-b-badge { background: #ecc94b; color: #744210; }
+.grade-b-plus-badge { background: #d69e2e; color: #fff; }
+.grade-c-badge { background: #ed8936; color: #fff; }
+.grade-d-badge { background: #fc8181; color: #fff; }
+.grade-f-badge { background: #e53e3e; color: #fff; }
+.overall-grade { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 16px; margin-left: 10px; vertical-align: middle; }
+.review-table { width: 100%; border-collapse: collapse; margin: 16px 0 40px 0; }
+.review-table th { font-size: 11px; font-weight: 700; color: #718096; letter-spacing: 1px; text-align: left; padding: 10px 12px; border-bottom: 2px solid #e2e8f0; }
+.review-table th:nth-child(2), .review-table th:nth-child(3) { text-align: center; }
+.review-table td { padding: 12px; border-bottom: 1px solid #edf2f7; vertical-align: top; }
+.review-table td:nth-child(2), .review-table td:nth-child(3) { text-align: center; }
+.table-section-name { font-weight: 600; font-size: 14px; color: #2d3748; }
+.table-section-desc { font-size: 12px; color: #a0aec0; }
+.status-pass { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #c6f6d5; color: #276749; font-size: 16px; }
+.status-fail { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #fed7d7; color: #c53030; font-size: 14px; font-weight: 700; }
+.status-info { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #bee3f8; color: #2b6cb0; font-size: 16px; }
+.issues-count { font-weight: 600; font-size: 15px; color: #4a5568; }
+.strengths-list, .improvements-list { margin: 8px 0 16px 20px; font-size: 14px; }
+.strengths-list li, .improvements-list li { margin-bottom: 4px; color: #4a5568; }
+strong.label { color: #2d3748; }
+.content-note { background: #ebf8ff; border-left: 4px solid #4299e1; padding: 16px 20px; margin-bottom: 16px; border-radius: 0 8px 8px 0; font-size: 14px; color: #2b6cb0; page-break-inside: avoid; }
+.content-note strong { color: #2c5282; }
+.badge-auto { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: #e9d8fd; color: #553c9a; }
+.retraction-warning { border: 2px solid #e53e3e; background: #fff5f5; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+.pubpeer-flag { border: 2px solid #dd6b20; background: #fffaf0; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+.disagreement-note { background: #fefcbf; border-left: 4px solid #d69e2e; padding: 12px 16px; margin-bottom: 12px; font-size: 13px; border-radius: 0 8px 8px 0; }
+.page-break { page-break-before: always; }
+.no-break { page-break-inside: avoid; }
+h3 { font-size: 17px; font-weight: 700; color: #2d3748; margin-top: 32px; margin-bottom: 4px; }
+h4 { font-size: 15px; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 12px; }
