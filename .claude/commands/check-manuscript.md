@@ -20,6 +20,16 @@ Then immediately use the Agent tool with `model: "sonnet"` to spawn an orchestra
 
 You are a lightweight orchestrator for a manuscript review workflow. Execute the following steps in order. Do NOT read the PDF or any large data files yourself — your job is to run scripts and delegate analysis.
 
+### Pipeline log
+
+Before EACH step, append a timestamped line to `/tmp/manuscript_review.log`. Clear the log at the start. Each agent you spawn must also log when it starts and finishes. At the end, read the log and include it in your report.
+
+```bash
+echo "" > /tmp/manuscript_review.log
+```
+
+Log format: `echo "$(date +%H:%M:%S) STEP_NAME: STATUS" >> /tmp/manuscript_review.log`
+
 ### Step 1: Parse the PDF with GROBID
 
 ```bash
@@ -56,6 +66,8 @@ Do NOT read the JSON output files — the analysis agent reads them directly.
 
 Use the Agent tool with `model: "opus"` and the following prompt:
 
+> First, run: `echo "$(date +%H:%M:%S) Step 3 - Opus analysis: STARTED" >> /tmp/manuscript_review.log`
+>
 > You are a meticulous academic manuscript reviewer. Read your full analysis instructions from `REPO_DIR/.claude/manuscript_analysis_prompt.md` using the Read tool.
 >
 > Then perform the complete manuscript review following those instructions.
@@ -67,6 +79,8 @@ Use the Agent tool with `model: "opus"` and the following prompt:
 > - Page map: `/tmp/manuscript_page_map.json` (page_map_available = {true or false depending on Step 1b})
 >
 > **Output:** Write your JSON review to `/tmp/review_data.json` using the Write tool.
+>
+> When done, run: `echo "$(date +%H:%M:%S) Step 3 - Opus analysis: COMPLETED" >> /tmp/manuscript_review.log`
 
 Wait for the agent to complete. If it reports an error, inform the user.
 
@@ -74,6 +88,8 @@ Wait for the agent to complete. If it reports an error, inform the user.
 
 Use the Agent tool with `model: "sonnet"` and the following prompt:
 
+> First, run: `echo "$(date +%H:%M:%S) Step 3b - Sonnet verification: STARTED" >> /tmp/manuscript_review.log`
+>
 > You are a verification agent. Your job is to check whether issues flagged in a manuscript review are real problems visible in the PDF, or artifacts of GROBID text extraction.
 >
 > 1. Read the review JSON from `/tmp/review_data.json`
@@ -87,6 +103,8 @@ Use the Agent tool with `model: "sonnet"` and the following prompt:
 > 6. Write the cleaned JSON back to `/tmp/review_data.json`.
 >
 > Only remove issues that are clearly GROBID artifacts. Keep all issues that reflect real problems visible in the PDF.
+>
+> When done, run: `echo "$(date +%H:%M:%S) Step 3b - Sonnet verification: COMPLETED" >> /tmp/manuscript_review.log`
 
 Wait for the agent to complete.
 
@@ -112,7 +130,8 @@ If Chrome is not at that path, try `google-chrome` or `chromium`. If all fail, i
 
 ### Step 6: Report to user
 
-Tell the user:
+Read `/tmp/manuscript_review.log` and tell the user:
+- The pipeline log (so they can see what ran)
 - The HTML report path
 - The PDF report path (if conversion succeeded)
 - A brief note on any issues encountered (GROBID failures, metacheck unavailability, Chrome not found)
