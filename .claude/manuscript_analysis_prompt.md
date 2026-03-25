@@ -25,13 +25,12 @@ First, read the structured data files:
 If the page map is available, use it to read only the pages you need. PDF pages render as images, so you can visually verify formatting, layout, and content.
 
 **Required reads:**
-- **Page 1** (always): Title, authors, affiliations, abstract, keywords. Visually verify these against GROBID's extracted data.
+- **Page 1** (always): Title, authors, affiliations, abstract, keywords. Compare what you SEE in the PDF image against GROBID's extracted data for these fields. **If the PDF looks correct but GROBID's data is garbled (e.g., German text concatenated into keywords, extra text appended to a field), that is a GROBID parsing error, NOT a manuscript issue — do NOT create an issue card for it.** Only report problems you can see in the actual PDF image.
 - **Figure/table pages** (from `page_summary.figures` and `page_summary.tables`): Inspect figure quality, table formatting, captions.
-- **Reference pages** (from `page_summary.references`): Verify bibliography entries against GROBID data. Check for concatenation artifacts.
+- **Reference pages** (from `page_summary.references`): Compare bibliography entries in the PDF against GROBID data. **Same rule: if the PDF reference looks correct but GROBID concatenated it with adjacent text (e.g., "Destatis" appended to a DOI), that is a parsing artifact — do NOT report it.**
 
-**On-demand reads** (when you spot issues in GROBID data):
-- If GROBID text looks garbled (e.g., keywords contain unrelated text, a DOI has extra characters appended), use the page map to find the relevant page and visually verify before flagging.
-- For content checks, read the relevant section pages (e.g., Method pages for statistical methods, Discussion pages for limitations).
+**On-demand reads** (for content checks):
+- Read relevant section pages (e.g., Method pages for statistical methods, Discussion pages for limitations).
 
 **Fallback (no page map):**
 If the page map is not available, read the PDF in chunks of up to 20 pages at a time. First read page 1, then all remaining pages systematically.
